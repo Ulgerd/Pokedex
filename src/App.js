@@ -22,7 +22,9 @@ class Pokemons extends Component {
       <div>
         {pokemonsArr.map(key=>
           <span key = {key.name}>
-            <img src = {`${key.img}`} alt={key.name} />
+            <img
+              src = {`${this.props.imgLink}${key.url.match(/\/\d{1,}/)[0]}.png`}
+              alt={key.name} />
             {key.name}
           </span>)}
       </div>
@@ -35,7 +37,6 @@ class App extends Component {
   state = {
     pokemons: {},
     pokemonsCurr: {},
-    pokemonsAll: {},
     input: "",
     error: null
   }
@@ -43,39 +44,17 @@ class App extends Component {
   async componentDidMount() {
     try {
       let res = await fetch(API);
-      let pokemons = await res.json();
+      let pokemonsAll = await res.json();
+      let res2 = await fetch(pokemonsAll.results[0].url)
+      let pokemonData = await res2.json();
+      let imgLink = pokemonData.sprites.front_default.replace(/\/\d{1,}.png/gi, "");
       this.setState({
-        pokemons: pokemons.results,
-        input: 'Pi'
+        pokemons: pokemonsAll.results,
+        input: 'Pi',
+        imgLink: imgLink
       })
       this.update();
     } catch (e) {
-      this.setState({
-        error: e
-      })
-    }
-  }
-
-  getImgLinks = (chosen) => {
-
-    try {
-      Promise.all(
-        chosen.map(key =>
-          fetch(key.url)
-          .then(res => res.json())
-          .then(res => {
-             return {
-               name: this.firstCapital(res.name),
-               img: res.sprites.front_default
-             }
-          })
-        )
-      ).then(sprites => {
-        this.setState({
-          pokemonsCurr: [...sprites]
-        })
-      })
-    } catch(e) {
       this.setState({
         error: e
       })
@@ -102,7 +81,9 @@ class App extends Component {
       }
       return null;
     })
-    this.getImgLinks(pokemonsChosen);
+    this.setState({
+      pokemonsCurr: {...pokemonsChosen}
+    })
   }
 
   render() {
@@ -115,7 +96,10 @@ class App extends Component {
           value= {this.state.input}
           onChange={this.onNewInput}
         />
-        <Pokemons poks = {this.state.pokemonsCurr} />
+        <Pokemons
+          poks = {this.state.pokemonsCurr}
+          imgLink={this.state.imgLink}
+        />
       </div>
     );
   }

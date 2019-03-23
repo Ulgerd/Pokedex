@@ -71,9 +71,9 @@ class App extends Component {
     })
   }
 
-  onClick = (e) => {
+  onClick = (page) => {
     this.setState({
-      currentPage: e.target.innerText
+      currentPage: page
     })
   }
 
@@ -98,13 +98,16 @@ class App extends Component {
           onChange={this.onNewInput}
         />
         <div
-          className="container">
+          className="container"
+          key={'container'}>
           <div
-            className="row d-flex flex-row py-5">
+            className="row d-flex flex-row py-5"
+            >
             <div
               className="px-4 py-5 d-flex flex-row flex-wrap align-items-center justify-content-between">
                 {currentPokemons.map(key=>
                   <PokeCard
+                    key={key.name}
                     name={key.name}
                     imgLink={this.state.imgLink}
                     id={key.url.match(/\/\d{1,}/)[0]}
@@ -113,7 +116,7 @@ class App extends Component {
             </div>
 
             <div
-              class="forPagination">
+              className="forPagination">
                 <Pagination
                   totalPokemons={pokemonsArr.length}
                   pageLimit={this.state.pageLimit}

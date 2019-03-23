@@ -31,3 +31,12 @@
     transform: rotate(360deg);
   }
 }
+
+.s96 {
+  width: 96px;
+  height: auto;
+}
+
+.forPagination {
+  margin: 0 auto;
+}

@@ -1,36 +1,9 @@
 import React, { Component } from 'react';
+import PokeCard from "./components/pokeCard";
+import Pagination from "./components/pagination";
 import './App.css';
 
 const API = 'https://pokeapi.co/api/v2/pokemon/?limit=783'
-
-class Pokemons extends Component {
-
-  sortByName = (arr) => {
-    arr.sort((a,b)=> {
-      if (a.name > b.name) return 1;
-      if (a.name < b.name) return -1;
-      return 0;
-    })
-  }
-
-  render() {
-    let {poks} = this.props;
-    let pokemonsArr = Object.keys(poks).map(key =>
-      poks[key])
-    this.sortByName(pokemonsArr);
-    return(
-      <div>
-        {pokemonsArr.map(key=>
-          <span key = {key.name}>
-            <img
-              src = {`${this.props.imgLink}${key.url.match(/\/\d{1,}/)[0]}.png`}
-              alt={key.name} />
-            {key.name}
-          </span>)}
-      </div>
-    )
-  }
-}
 
 class App extends Component {
 
@@ -38,7 +11,9 @@ class App extends Component {
     pokemons: {},
     pokemonsCurr: {},
     input: "",
-    error: null
+    error: null,
+    currentPage: 1,
+    pageLimit: 12
   }
 
   async componentDidMount() {
@@ -50,7 +25,7 @@ class App extends Component {
       let imgLink = pokemonData.sprites.front_default.replace(/\/\d{1,}.png/gi, "");
       this.setState({
         pokemons: pokemonsAll.results,
-        input: 'Pi',
+        input: 'P',
         imgLink: imgLink
       })
       this.update();
@@ -67,7 +42,8 @@ class App extends Component {
 
   onNewInput = async(e) => {
     await this.setState({
-      input: e.target.value
+      input: e.target.value,
+      currentPage: 1
     })
     await this.update();
   }
@@ -77,6 +53,7 @@ class App extends Component {
     let pokemonsChosen = [];
     Object.keys(pokemons).map(key => {
       if (this.firstCapital(pokemons[key].name).search([input])>-1) {
+        pokemons[key].name = this.firstCapital(pokemons[key].name);
         pokemonsChosen.push(pokemons[key])
       }
       return null;
@@ -86,9 +63,33 @@ class App extends Component {
     })
   }
 
+  sortByName = (arr) => {
+    arr.sort((a,b)=> {
+      if (a.name > b.name) return 1;
+      if (a.name < b.name) return -1;
+      return 0;
+    })
+  }
+
+  onClick = (e) => {
+    this.setState({
+      currentPage: e.target.innerText
+    })
+  }
+
   render() {
+    let pokemonsArr = Object.keys(this.state.pokemonsCurr).map(key =>
+      this.state.pokemonsCurr[key])
+    this.sortByName(pokemonsArr);
+
+    let {currentPage, pageLimit} = this.state
+
+    let indexOfLastPokemon = currentPage * pageLimit;
+    let indexOfFirstPokemon = indexOfLastPokemon - pageLimit;
+    let currentPokemons = pokemonsArr.slice(indexOfFirstPokemon, indexOfLastPokemon);
+
     return (
-      <div className="App">
+      <div className="container">
         Name:
         <input
           type="text"
@@ -96,10 +97,32 @@ class App extends Component {
           value= {this.state.input}
           onChange={this.onNewInput}
         />
-        <Pokemons
-          poks = {this.state.pokemonsCurr}
-          imgLink={this.state.imgLink}
-        />
+        <div
+          className="container">
+          <div
+            className="row d-flex flex-row py-5">
+            <div
+              className="px-4 py-5 d-flex flex-row flex-wrap align-items-center justify-content-between">
+                {currentPokemons.map(key=>
+                  <PokeCard
+                    name={key.name}
+                    imgLink={this.state.imgLink}
+                    id={key.url.match(/\/\d{1,}/)[0]}
+                  />)
+                }
+            </div>
+
+            <div
+              class="forPagination">
+                <Pagination
+                  totalPokemons={pokemonsArr.length}
+                  pageLimit={this.state.pageLimit}
+                  onClick={this.onClick}
+                  currentPage = {this.state.currentPage}
+                />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

@@ -26,7 +26,7 @@ class Pagination extends Component {
       } else if (totalPages - currentPage < 5) {
         firstPage = totalPages-9;
       } else {
-        firstPage = currentPage -5;
+        firstPage = currentPage -4;
       }
       for (let i = firstPage; i <= (firstPage+9); i++) {
         pageNumbers.push(i);
@@ -104,7 +104,7 @@ class Pagination extends Component {
                   Last
                 </a>
             </li>
-            
+
         </ul>
       </nav>
     )

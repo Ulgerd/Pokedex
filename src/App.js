@@ -90,33 +90,42 @@ class App extends Component {
 
     return (
       <div className="container">
-        Name:
-        <input
-          type="text"
-          name="pokeSearch"
-          value= {this.state.input}
-          onChange={this.onNewInput}
-        />
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span
+              class="input-group-text"
+            >
+              Name:
+            </span>
+          </div>
+          <input
+            type="text"
+            value= {this.state.input}
+            class="form-control"
+            onChange={this.onNewInput}
+            name="pokeSearch"
+          />
+        </div>
+
+
         <div
           className="container"
           key={'container'}>
           <div
-            className="row d-flex flex-row py-5"
-            >
-            <div
-              className="px-4 py-5 d-flex flex-row flex-wrap align-items-center justify-content-between">
-                {currentPokemons.map(key=>
-                  <PokeCard
-                    key={key.name}
-                    name={key.name}
-                    imgLink={this.state.imgLink}
-                    id={key.url.match(/\/\d{1,}/)[0]}
-                  />)
-                }
-            </div>
+            className="px-4 py-5 d-flex flex-row flex-wrap align-items-center justify-content-between">
+              {currentPokemons.map(key=>
+                <PokeCard
+                  key={key.name}
+                  name={key.name}
+                  imgLink={this.state.imgLink}
+                  id={key.url.match(/\/\d{1,}/)[0]}
+                />)
+              }
+          </div>
 
-            <div
-              className="forPagination">
+
+          <div className="row">
+            <div className="forPagination">
                 <Pagination
                   totalPokemons={pokemonsArr.length}
                   pageLimit={this.state.pageLimit}

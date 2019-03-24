@@ -33,69 +33,78 @@ class Pagination extends Component {
       }
     }
 
+    if (totalPages < 2) {
+      return null;
+    }
+
     let renderPageNumbers = pageNumbers.map(number => {
       return (
         <li
           key={number}
           className={+currentPage === number ? "page-item active": "page-item"}>
           <a
-            className="page-link"
+            className="page-link shadow-none"
             href='#'
             key={number}
             id={number}
-            onClick={(e) => this.onClick([e.target.innerText, totalPages])}
+            onClick={(e) => {this.onClick([e.target.innerText, totalPages])}}
           >
             {number}
           </a>
         </li>
       );
     });
-    console.log(totalPokemons / pageLimit);
     return (
       <nav>
         <ul
           className="pagination">
+
             <li
               className={currentPage <= 1 ? "page-item disabled": "page-item"}>
                 <a
                   href='#'
-                  className="page-link"
+                  className="page-link shadow-none"
                   onClick={() => this.onClick([1, totalPages])}
                 >
                   First
                 </a>
             </li>
+
             <li
               className={currentPage <= 1 ? "page-item disabled": "page-item"}>
                 <a
                   href='#'
-                  className="page-link"
+                  className="page-link shadow-none"
                   onClick={() => this.onClick([+currentPage - 1, totalPages])}
                 >
                   Previous
                 </a>
             </li>
+
             {renderPageNumbers}
+
             <li
               className={currentPage >= totalPages ? "page-item disabled": "page-item"}>
                 <a
                   href='#'
-                  className="page-link"
+                  className="page-link shadow-none"
                   onClick={() => this.onClick([+currentPage + 1, totalPages])}
                 >
                   Next
                 </a>
             </li>
+
             <li
               className={currentPage >= totalPages ? "page-item disabled": "page-item"}>
                 <a
                   href='#'
-                  className="page-link"
+                  className="page-link shadow-none"
                   onClick={() => this.onClick([totalPages, totalPages])}
                 >
                   Last
                 </a>
             </li>
+            
         </ul>
       </nav>
     )
